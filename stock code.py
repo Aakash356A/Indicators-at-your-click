@@ -1,4 +1,4 @@
-#stockcode 
+#stockcode : To get MACD indicators of top 25 stocks (or stocks given as input) instantly.
 import time
 import datetime
 import numpy as np
@@ -11,13 +11,8 @@ import matplotlib.pyplot as plt
 #from pyexcel.cookbook import merge_all_to_a_book
 #import glob
 
-        
-
-wrkbk = openpyxl.load_workbook("Stock_codes.xlsx") #excel file where all the symbols of top 25 stocks are saved
-
-
+wrkbk = openpyxl.load_workbook("Stock_codes.xlsx")
 sh = wrkbk.active
-#constants
 kf=0.15384 #k=smoothing factor ,k=2/(n+1), where n is number of days in EMA
 k1=1-kf
 k26=0.074074
@@ -25,28 +20,26 @@ k261=1-k26
 k9=0.2
 k91=1-k9
 
-
-
 # iterate through excel and display data
-for row in sh.iter_rows(min_row=1, min_col=1, max_row=1, max_col=1):
-    for ticker in row:
-        print(ticker.value, end=" ")
+for row in sh.iter_rows(min_row=1,min_col=1,max_row=2,max_col=1):
+    for ticker2 in row:
+        print(ticker2.value, end=" ")  
     print()
-    
-    ticker='DMART'
+    ticker=ticker2.value
+
+    #ticker='DMART'
     period1 = int(time.mktime(datetime.datetime(1992, 1, 1, 23, 59).timetuple()))
     period2 = int(time.mktime(datetime.datetime(2021, 7, 28, 23, 59).timetuple()))
     interval = '1d' # 1d, 1m
-        #download the historical data
+
     query_string =f'https://query1.finance.yahoo.com/v7/finance/download/{ticker}.NS?period1={period1}&period2={period2}&interval={interval}&events=history&includeAdjustedClose=true'
-#convert .CSV to .xlsx
+
     d1=pd.read_csv(query_string)
     #print(d1)
     d2=pd.ExcelWriter('ticker.xlsx')
     d1.to_excel(d2,index=False)
     d2.save()
 
-    
     #wrkbk1 = openpyxl.load_workbook("ticker.xlsx")
     #sh1 = wrkbk1.active
     
@@ -54,7 +47,6 @@ for row in sh.iter_rows(min_row=1, min_col=1, max_row=1, max_col=1):
     excel_file=openpyxl.load_workbook('ticker.xlsx')
     excel_sheet=excel_file['Sheet1']
     sh1 = excel_file.active
-        #delee blank cells in the column
     for row in excel_sheet:
         coun+=1
         for cell in row:
@@ -71,7 +63,6 @@ for row in sh.iter_rows(min_row=1, min_col=1, max_row=1, max_col=1):
     #print(dategraph)
     '''
     sum1=0
-        #the mathematical calculation
     for row1 in sh1.iter_rows(min_row=2,min_col=5,max_row=13,max_col=5):
         for k in row1:
             #print(k.value)          
@@ -116,7 +107,7 @@ for row in sh.iter_rows(min_row=1, min_col=1, max_row=1, max_col=1):
                     #print(signal)
                     #print('ad')
                 elif count1>9:
-                    if total-count<=50:
+                    if total-count+10<=50:
                         count2=count2+1
                         MACDgraph.append(MACD)
                         signalgraph.append(signal)
@@ -131,18 +122,16 @@ for row in sh.iter_rows(min_row=1, min_col=1, max_row=1, max_col=1):
         for j in row1:
             #print(j.value)
             dategraph.append(j.value)
-       
-#print(len(MACDgraph))
-#print(len(dategraph)) 
-#print(len(signalgraph))
-
-#display the graphs
-
-plt.plot(dategraph, MACDgraph, label = "MACD")
-plt.plot(dategraph, signalgraph, label = "Signal")
-plt.xlabel('Date')
-plt.ylabel('Indicator')
-plt.title('MACD Indicator')
-plt.legend()
-plt.show()
+    print(len(MACDgraph))
+    print(len(dategraph)) 
+    print(len(signalgraph))   
+    name='MACD indicator ' + ticker
+    print(name)
+    plt.plot(dategraph, MACDgraph, label = "MACD")
+    plt.plot(dategraph, signalgraph, label = "Signal")
+    plt.xlabel('Date')
+    plt.ylabel('Indicator')
+    plt.title(name)
+    plt.legend()
+    plt.show()
 
