@@ -55,13 +55,7 @@ for row in sh.iter_rows(min_row=1,min_col=1,max_row=2,max_col=1):
     excel_file.save('ticker.xlsx')
 
     dategraph=[]
-    '''
-    for row1 in sh1.iter_rows(min_row=49,min_col=1,max_row=total1,max_col=1):
-        for j in row1:
-            #print(j.value)
-            dategraph.append(j.value)
-    #print(dategraph)
-    '''
+    
     sum1=0
     for row1 in sh1.iter_rows(min_row=2,min_col=5,max_row=13,max_col=5):
         for k in row1:
